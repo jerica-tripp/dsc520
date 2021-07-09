@@ -1,0 +1,81 @@
+# Jerica Tripp
+#Week 5 Exercise
+
+
+
+#1. Using the dplyr package, use the 6 different operations to analyze/transform
+#  the data - GroupBy, Summarize, Mutate, Filter, Select, and Arrange – 
+#  Remember this isn’t just modifying data, you are learning about your data 
+#  also – so play around and start to understand your dataset in more detail
+
+## Load the `data/r4ds/week-7-housing.xlsx.csv` to housing_df 
+setwd("/Users/Jerica Tripp/Documents/ClassFiles/dsc520")
+housing_df <- read.csv("data/week-6-housing.csv")
+head(housing_df)
+library('dplyr')
+
+#Modification 1: GroupBy
+housing_df %>% group_by(zip5)
+
+#Modification 1: Summarize
+housing_df %>% group_by(zip5) %>% summarize(mean(Sale.Price))
+
+#Modification 1: Mutate
+housing_df %>% mutate(CostPerSqFt=Sale.Price/square_feet_total_living)
+
+#Modification 1: Filter
+housing_df %>% filter(Sale.Price >= 1000000)
+
+#Modification 1: Select
+housing_df %>% select(Sale.Price, square_feet_total_living)
+
+
+#Modification 1: Arrange
+housing_df %>% select(Sale.Price, square_feet_total_living)%>%arrange(Sale.Price)
+
+#2. Using the purrr package – perform 2 functions on your dataset.  
+#  You could use zip_n, keep, discard, compact, etc.
+library('purrr')
+
+housing_df$Sale.Price %>% map(function(x) x*2)
+housing_df$Sale.Price %>%keep(function(x)sum(x)>50000)
+
+
+#3. Use the cbind and rbind function on your dataset
+
+#CBIND EXAMPLE:
+#----creat new dataframe of just sale price divided by square feet
+PricePerSqFt_df<- housing_df$Sale.Price/housing_df$square_feet_total_living
+#----creat copy of housing_df
+housing_df2 <- housing_df
+#----bind the new column to the cop of housing_df
+housing_df2 <- cbind(housing_df2, price_per_sq_ft=PricePerSqFt_df)
+
+
+# --- RBIND EXAMPLE:
+# ----Create df of all houses over 1 million
+housing_df_Mil <- housing_df %>% filter(Sale.Price >= 1000000) 
+# ----Create new df from housing_df
+housing_df_a  <- housing_df
+# ----Add housing_df_Mil df rows to new dataframe
+housing_df_a <- rbind(housing_df_a,housing_df_Mil)
+
+#4. Split a string, then concatenate the results back together
+library(stringr)
+#---- split the sale date fied by "/"
+dateCols_df <- housing_df$ï..Sale.Date %>% str_split("/")
+
+#---- Loop through the dateCols_df and concatenate fields back together, adding "/"
+#---- Put result to new newcol dataframe
+a <- 0
+for(a in 1:length(dateCols_df))
+    if(a < 12864){
+    {
+        a <- a+1
+        print(a)
+        newcol[[a]] <- paste(dateCols_df[[a]][1],"/",dateCols_df[[a]][2],"/",dateCols_df[[a]][3], sep='' )
+    }
+
+}
+
+
